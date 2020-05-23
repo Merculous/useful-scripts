@@ -67,7 +67,7 @@ def main():
         compress(argv[2], '7z')
 
     elif args.zpaq:
-        print('Compresssing with zpaq...')
+        print('Compressing with zpaq...')
         compress(argv[2], 'zpaq')
 
     else:
