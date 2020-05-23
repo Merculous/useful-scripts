@@ -4,6 +4,7 @@ import os
 import argparse
 import subprocess
 import sys
+import time
 
 
 def compress(data, alg):
@@ -11,7 +12,6 @@ def compress(data, alg):
 
     if alg == 'xz':
         env = os.environ['XZ_OPT'] = '-e9'
-        print('XZ_OPT environment variable is:{}'.format(env))
         subprocess.run([
             'tar',
             'cvJf',
@@ -60,15 +60,24 @@ def main():
 
     if args.xz:
         print('Compressing with xz...')
+        start = time.time()
         compress(argv[2], 'xz')
+        end = time.time() - start
+        print('xz took {:.2f} seconds'.format(end))
 
     elif args.p7z:
-        print('Compressing with 7zip')
+        print('Compressing with 7zip...')
+        start = time.time()
         compress(argv[2], '7z')
+        end = time.time() - start
+        print('7zip took {:.2f} seconds'.format(end))
 
     elif args.zpaq:
         print('Compressing with zpaq...')
+        start = time.time()
         compress(argv[2], 'zpaq')
+        end = time.time() - start
+        print('zpaq took {:.2f} seconds'.format(end))
 
     else:
         sys.exit(parser.print_help(sys.stderr))
