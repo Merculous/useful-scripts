@@ -11,37 +11,41 @@ def compress(data, alg):
     data = os.path.abspath(data)
 
     if alg == 'xz':
+        try:
+            tar_location = subprocess.run(
+                ('which', 'tar'), stdout=subprocess.PIPE, universal_newlines=True)
+        except:
+            raise FileNotFoundError
+
         env = os.environ['XZ_OPT'] = '-e9'
-        subprocess.run([
-            'tar',
-            'cvJf',
-            '{}.txz'.format(data),
-            data])
+        commands = (
+            tar_location.stdout.strip(), 'cvJf',
+            '{}.txz'.format(data), data)
+        subprocess.run(commands)
 
     elif alg == '7z':
-        subprocess.run([
-            '7za',
-            'a',
-            '-t7z',
-            '-m0=lzma2',
-            '-mx=9',
-            '-aoa',
-            '-md128m',
-            '-mfb273',
-            '-ms16g',
-            '-mmt4',
-            '-ms=on',
-            '{}.7z'.format(data),
-            data])
+        try:
+            p7z_location = subprocess.run(
+                ('which', '7za'), stdout=subprocess.PIPE, universal_newlines=True)
+        except:
+            raise FileNotFoundError
+
+        commands = (
+            p7z_location.stdout.strip(), 'a', '-t7z', '-m0=lzma2', '-mx=9', '-aoa', '-md128m',
+            '-mfb273', '-ms16g', '-mmt4', '-ms=on', '{}.7z'.format(data), data)
+        subprocess.run(commands)
 
     elif alg == 'zpaq':
-        subprocess.run([
-            'zpaq',
-            'a',
-            '{}.zpaq'.format(data),
-            data,
-            '-method',
-            '5'])  # Some can have 6 but I'll just leave it cause I'm too lazy to add another whole command
+        try:
+            zpaq_location = subprocess.run(
+                ('which', 'zpaq'), stdout=subprocess.PIPE, universal_newlines=True)
+        except:
+            raise FileNotFoundError
+
+        commands = (
+            zpaq_location.stdout.strip(), 'a', '{}.zpaq'.format(
+                data), data, '-method', '5')
+        subprocess.run(commands)
 
     else:
         raise ValueError('Algorithm {} is not supported!'.format(alg))
@@ -52,9 +56,12 @@ def main():
 
     parser = argparse.ArgumentParser(usage='{} <alg> <path>'.format(argv[0]))
 
-    parser.add_argument('--xz', nargs=1, help='Use xz', metavar='PATH')
-    parser.add_argument('--p7z', nargs=1, help='Use 7zip', metavar='PATH')
-    parser.add_argument('--zpaq', nargs=1, help='Use zpaq', metavar='PATH')
+    parser.add_argument(
+        '--xz', nargs=1, help='Use xz (slow, good compression, on basically every device at this point)', metavar='PATH')
+    parser.add_argument(
+        '--p7z', nargs=1, help='Use 7zip (fast, great compression, needs to be downloaded)', metavar='PATH')
+    parser.add_argument(
+        '--zpaq', nargs=1, help='Use zpaq (fast, best compression, needs to be downloaded)', metavar='PATH')
 
     args = parser.parse_args()
 
