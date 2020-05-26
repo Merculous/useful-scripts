@@ -81,8 +81,9 @@ def convert(video):
 
 
 def main():
+    argv = sys.argv
     parser = argparse.ArgumentParser(
-        usage=f'{sys.argv[0]} <option> <arg>')
+        usage='{} <option> <arg>'.format(argv[0]))
     parser.add_argument(
         '-c', help='convert a video', nargs=1, metavar='VIDEO')
     parser.add_argument(
@@ -90,7 +91,7 @@ def main():
     args = parser.parse_args()
 
     if args.c:
-        convert(sys.argv[2])
+        convert(argv[2])
     elif args.d:
         checkForDups()
     else:
