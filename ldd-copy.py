@@ -48,7 +48,7 @@ def main():
     if args.i:
         getLibsFromFile(argv[2], argv[3])
     else:
-        parser.print_help(sys.stderr)
+        sys.exit(parser.print_help(sys.stderr))
 
 
 if __name__ == '__main__':
