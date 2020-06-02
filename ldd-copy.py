@@ -41,7 +41,7 @@ def main():
 
     parser = argparse.ArgumentParser(usage='{} <file> <dir>'.format(argv[0]))
 
-    parser.add_argument('-i', nargs=2, metavar=('FILE', 'DIR'))
+    parser.add_argument('-i', nargs=2, metavar=('FILE', 'DIR'), required=True)
 
     args = parser.parse_args()
 
