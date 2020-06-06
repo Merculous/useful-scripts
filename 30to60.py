@@ -48,36 +48,43 @@ def checkForDups():
         print('Duplicate: ./{}'.format(' '.join(duplicate)))
 
 
+# TODO List/Tuple support (probably going to have it spawn a few processes, like 4 seperate encodings)
+
 def convert(video):
-    video = os.path.abspath(video)
+    # Spaces in filenames need to be escaped, else files with no spaces will only work
+    video = video.replace(' ', r'\ ')
     try:
         ffmpeg_location = subprocess.run((
-            'which', 'ffmpeg'),
-            stdout=subprocess.PIPE, universal_newlines=True)
-    except:
-        raise FileNotFoundError
+            'which',
+            'ffmpeg'),
+            stdout=subprocess.PIPE,
+            universal_newlines=True)
+    except FileNotFoundError:
+        print('Please download ffmpeg or fix your $PATH var, and try again.')
+    except Exception as error:
+        print(error)
+    else:
+        parameters = [
+            ffmpeg_location.stdout.strip(),
+            "-i {}".format(video),
+            "-c:v libx264",
+            "-preset fast",
+            "-x264opts nal-hrd=cbr:force-cfr=1",
+            "-b:v 6M",
+            "-minrate 6M",
+            "-maxrate 6M",
+            "-bufsize 6M",
+            "-c:a copy",
+            "-r 60",
+            "-force_fps",
+            "-aspect 16:9",
+            "-s 1280x720",
+            "-vf minterpolate=fps=60:mi_mode=mci:mc_mode=obmc:me_mode=bilat:me=epzs:mb_size=16:search_param=32:scd=fdiff:scd_threshold=5",
+            "-metadata comment=' '",
+            "converted/{}".format(os.path.basename(video))
+        ]
 
-    parameters = [
-        ffmpeg_location.stdout.strip(),
-        "-i {}".format(video),
-        "-c:v libx264",
-        "-preset fast",
-        "-x264opts nal-hrd=cbr:force-cfr=1",
-        "-b:v 6M",
-        "-minrate 6M",
-        "-maxrate 6M",
-        "-bufsize 6M",
-        "-c:a copy",
-        "-r 60",
-        "-force_fps",
-        "-aspect 16:9",
-        "-s 1280x720",
-        "-vf minterpolate=fps=60:mi_mode=mci:mc_mode=obmc:me_mode=bilat:me=epzs:mb_size=16:search_param=32:scd=fdiff:scd_threshold=5",
-        "-metadata comment=' '",
-        "converted/{}".format(os.path.basename(video))
-    ]
-
-    subprocess.run(' '.join(parameters).strip(), shell=True)
+        subprocess.run(' '.join(parameters).strip(), shell=True)
 
 
 def main():
