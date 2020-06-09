@@ -8,8 +8,6 @@ import time
 
 
 def compress(data, alg):
-    data = os.path.abspath(data)
-
     if alg == 'xz':
         try:
             tar_location = subprocess.run(
