@@ -45,7 +45,7 @@ def checkForDups():
     if not duplicate:
         sys.exit('There are no duplicates!')
     else:
-        print('Duplicate: ./{}'.format(' '.join(duplicate)))
+        print('Duplicate: ./{}'.format(', '.join(duplicate)))
 
 
 # TODO List/Tuple support (probably going to have it spawn a few processes, like 4 seperate encodings)
@@ -89,12 +89,21 @@ def convert(video):
 
 def main():
     argv = sys.argv
+
     parser = argparse.ArgumentParser(
         usage='{} <option> <arg>'.format(argv[0]))
+
     parser.add_argument(
-        '-c', help='convert a video', nargs=1, metavar='VIDEO')
+        '-c',
+        help='convert a video',
+        nargs=1,
+        metavar='VIDEO')
+
     parser.add_argument(
-        '-d', help='checks for duplicates', action='store_true')
+        '-d',
+        help='checks for duplicates',
+        action='store_true')
+
     args = parser.parse_args()
 
     if args.c:

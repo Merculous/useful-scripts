@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import os
 import argparse
 import subprocess
 import sys
@@ -11,39 +10,62 @@ def compress(data, alg):
     if alg == 'xz':
         try:
             tar_location = subprocess.run(
-                ('which', 'tar'), stdout=subprocess.PIPE, universal_newlines=True)
-        except:
-            raise FileNotFoundError
+                ('which',
+                 'tar'),
+                stdout=subprocess.PIPE,
+                universal_newlines=True)
+        except FileNotFoundError:
+            raise
 
-        env = os.environ['XZ_OPT'] = '-e9'
-        commands = (
-            tar_location.stdout.strip(), 'cvJf',
-            '{}.txz'.format(data), data)
-        subprocess.run(commands)
+        subprocess.run(
+            ('XZ_OPT=-e9',
+             tar_location.stdout.strip(),
+             'cvJf',
+             '{}.txz'.format(data),
+             data))
 
     elif alg == '7z':
         try:
             p7z_location = subprocess.run(
-                ('which', '7za'), stdout=subprocess.PIPE, universal_newlines=True)
-        except:
-            raise FileNotFoundError
+                ('which',
+                 '7za'),
+                stdout=subprocess.PIPE,
+                universal_newlines=True)
+        except FileNotFoundError:
+            raise
 
-        commands = (
-            p7z_location.stdout.strip(), 'a', '-t7z', '-m0=lzma2', '-mx=9', '-aoa', '-md128m',
-            '-mfb273', '-ms16g', '-mmt4', '-ms=on', '{}.7z'.format(data), data)
-        subprocess.run(commands)
+        subprocess.run(
+            (p7z_location.stdout.strip(),
+             'a',
+             '-t7z',
+             '-m0=lzma2',
+             '-mx=9',
+             '-aoa',
+             '-md128m',
+             '-mfb273',
+             '-ms16g',
+             '-mmt4',
+             '-ms=on',
+             '{}.7z'.format(data),
+             data))
 
     elif alg == 'zpaq':
         try:
             zpaq_location = subprocess.run(
-                ('which', 'zpaq'), stdout=subprocess.PIPE, universal_newlines=True)
-        except:
-            raise FileNotFoundError
+                ('which',
+                 'zpaq'),
+                stdout=subprocess.PIPE,
+                universal_newlines=True)
+        except FileNotFoundError:
+            raise
 
-        commands = (
-            zpaq_location.stdout.strip(), 'a', '{}.zpaq'.format(
-                data), data, '-method', '5')
-        subprocess.run(commands)
+        subprocess.run(
+            (zpaq_location.stdout.strip(),
+             'a',
+             '{}.zpaq'.format(data),
+             data,
+             '-method',
+             '5'))
 
     else:
         raise ValueError('Algorithm {} is not supported!'.format(alg))
@@ -55,11 +77,22 @@ def main():
     parser = argparse.ArgumentParser(usage='{} <alg> <path>'.format(argv[0]))
 
     parser.add_argument(
-        '--xz', nargs=1, help='Use xz (slow, good compression, on basically every device at this point)', metavar='PATH')
+        '--xz',
+        nargs=1,
+        help='Use xz (slow, good compression, on basically every device at this point)',
+        metavar='PATH')
+
     parser.add_argument(
-        '--p7z', nargs=1, help='Use 7zip (fast, great compression, needs to be downloaded)', metavar='PATH')
+        '--p7z',
+        nargs=1,
+        help='Use 7zip (fast, great compression, needs to be downloaded)',
+        metavar='PATH')
+
     parser.add_argument(
-        '--zpaq', nargs=1, help='Use zpaq (fast, best compression, needs to be downloaded)', metavar='PATH')
+        '--zpaq',
+        nargs=1,
+        help='Use zpaq (fast, best compression, needs to be downloaded)',
+        metavar='PATH')
 
     args = parser.parse_args()
 
