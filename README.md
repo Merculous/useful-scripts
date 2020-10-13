@@ -1,6 +1,6 @@
 # Compress
 
-Uses xz, 7zip, and zpaq to achieve maximum compression
+Uses archivers: bsc, bzip2, gzip, nanozip, precomp, pcompress, p7zip, xz, zpaq to achieve max compression
 
 # 30to60
 
